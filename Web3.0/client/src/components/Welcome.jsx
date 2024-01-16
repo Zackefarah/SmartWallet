@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { AiFillPlayCircle } from "react-icons/ai";
+import React, { useContext, useState } from "react";
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
-import { TransactionContext } from "../context/TransactionContext";
+import { TransactionContext } from "../context/TransactionContext"; // Adjust the relative path as needed
+
 import { Loader } from "./";
 
 const companyCommonStyles =
@@ -20,11 +20,38 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 );
 
 const Welcome = () => {
-  const { value } = useContext(TransactionContext);
-  console.log(value);
-  const connectWallet = () => {};
+  const {
+    connectWallet,
+    currentAccount,
+    sendTransaction,
+    handleChange,
+    formData,
+    isLoading,
+  } = useContext(TransactionContext);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    // You can access form data from formData state
+    const { addressTo, amount, keyword, message } = formData;
+
+    // Check if the necessary fields are filled (You may want to add additional validation)
+    if (!addressTo || !amount || !keyword || !message) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    // Call the sendTransaction function from your context
+    // Make sure sendTransaction handles the transaction logic
+    await sendTransaction();
+
+    // Clear the form or reset the formData state if needed
+    setFormData({
+      addressTo: "",
+      amount: "",
+      keyword: "",
+      message: "",
+    });
+  };
+
   return (
     <div className="flex w-full justify-center">
       <div className="flex mf:flex-row flex-col items-start justify-between md:p-20 py-12 px-4">
@@ -35,14 +62,18 @@ const Welcome = () => {
           <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base">
             Explore the Crypto world. Buy and sell easily on Krypto.{" "}
           </p>
-          <button
-            type="button"
-            onClick={connectWallet}
-            className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg- [#2546bd] "
-          >
-            {" "}
-            <p className="text-white text-base font-semibold">Connect Wallet</p>
-          </button>
+          {!currentAccount && (
+            <button
+              type="button"
+              onClick={connectWallet}
+              className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg- [#2546bd] "
+            >
+              {" "}
+              <p className="text-white text-base font-semibold">
+                Connect Wallet
+              </p>
+            </button>
+          )}
           <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10">
             <div className={`rounded-tl-2xl ${companyCommonStyles}`}>
               Reliability
@@ -70,9 +101,9 @@ const Welcome = () => {
                 <BsInfoCircle fontSize={17} color="#fff" />
               </div>
               <div>
-                <p className="text-white font-light text-sm">Adress</p>
+                <p className="text-white font-light text-sm">Address</p>
                 <p className="text-white font-semibold text-lg mt-1">
-                  Ethereum{" "}
+                  Ethereum
                 </p>
               </div>
             </div>
@@ -82,28 +113,32 @@ const Welcome = () => {
               placeholder="Address To"
               name="addressTo"
               type="text"
-              handleChange={() => {}}
+              value={formData.addressTo}
+              handleChange={(e) => handleChange(e, "addressTo")}
             />
             <Input
               placeholder="Amount (ETH)"
               name="amount"
               type="number"
-              handleChange={() => {}}
+              value={formData.amount}
+              handleChange={(e) => handleChange(e, "amount")}
             />
             <Input
               placeholder="Keyword (Gif)"
               name="keyword"
               type="text"
-              handleChange={() => {}}
+              value={formData.keyword}
+              handleChange={(e) => handleChange(e, "keyword")}
             />
             <Input
               placeholder="Enter Message"
               name="message"
               type="text"
-              handleChange={() => {}}
+              value={formData.message}
+              handleChange={(e) => handleChange(e, "message")}
             />
             <div className="h-[1px] w-full bg-gray-400 my-2" />
-            {true ? (
+            {isLoading ? (
               <Loader />
             ) : (
               <button
