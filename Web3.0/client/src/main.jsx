@@ -1,10 +1,11 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import { createRoot } from "react-dom/client"; // Updated import
 import App from "./App.jsx";
 import "./index.css";
 import { TransactionsProvider } from "./context/TransactionContext";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const container = document.getElementById("root");
+const root = createRoot(container); // Updated usage
 
 root.render(
   <TransactionsProvider>
